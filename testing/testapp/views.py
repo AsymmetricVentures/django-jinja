@@ -2,7 +2,13 @@
 
 from django.views.generic import View
 from django.http import HttpResponse
-from django.shortcuts import render_to_response
+try:
+    from django.shortcuts import render
+except ImportError:
+    from django.shortcuts import render_to_response
+    def render(request, template_name, *args, **kwargs):
+        return render_to_response(template_name, *args, request=request, **kwargs)
+        
 from django.template.loader import render_to_string
 
 from django_jinja.views.generic.detail import DetailView
@@ -15,18 +21,17 @@ from .models import TestModel
 
 class BasicTestView(View):
     def get(self, request, data=None):
-        data = render_to_string("hello_world.jinja", {"name": "Jinja2"},
-                                request=request)
+        data = render(request, "hello_world.jinja", {"name": "Jinja2"})
         return HttpResponse(data)
 
 
 class PipelineTestView(View):
     def get(self, request, data=None):
-        return render_to_response("pipeline_test.jinja", request=request)
+        return render(request, "pipeline_test.jinja")
 
 class ContextManipulationTestView(View):
     def get(self, request):
-        return render(request, "hello_world.jinja", {"name": "Jinja2"}, request=request)
+        return render(request, "hello_world.jinja", {"name": "Jinja2"})
 
 # ==== generic.detail ====
 class DetailTestView(DetailView):
