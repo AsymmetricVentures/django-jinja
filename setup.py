@@ -10,9 +10,6 @@ INSTALL_REQUIRES = [
     "django >=1.8",
 ]
 
-if sys.version_info < (2, 7):
-    INSTALL_REQUIRES.append("importlib")
-
 setup(
     name = "django-jinja",
     version = "2.4.1",
@@ -53,13 +50,13 @@ setup(
         "License :: OSI Approved :: BSD License",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.3",
         "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
         "Topic :: Internet :: WWW/HTTP",
     ]
 )

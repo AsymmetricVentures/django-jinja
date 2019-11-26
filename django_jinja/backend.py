@@ -29,7 +29,6 @@ from django.template.backends.utils import csrf_input_lazy
 from django.template.backends.utils import csrf_token_lazy
 from django.template.context import BaseContext
 from django.utils import lru_cache
-from django.utils import six
 from django.utils.encoding import smart_text
 from django.utils.functional import SimpleLazyObject
 from django.utils.functional import cached_property
@@ -161,7 +160,7 @@ class Jinja2(BaseEngine):
 
         undefined = options.pop("undefined", None)
         if undefined is not None:
-            if isinstance(undefined, six.string_types):
+            if isinstance(undefined, str):
                 options["undefined"] = utils.load_class(undefined)
             else:
                 options["undefined"] = undefined
@@ -173,7 +172,7 @@ class Jinja2(BaseEngine):
 
         environment_cls = import_string(environment_clspath)
 
-        if isinstance(options.get("loader"), six.string_types):
+        if isinstance(options.get("loader"), str):
             # Allow to specify a loader as string
             loader_cls = import_string(options.pop("loader"))
         else:
