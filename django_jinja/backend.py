@@ -14,6 +14,10 @@ import sys
 import os
 import os.path as path
 from importlib import import_module
+try:
+    from functools import lru_cache
+except ImportError:
+    from django.utils.lru_cache import lru_cache
 
 import jinja2
 from django.conf import settings
@@ -28,7 +32,6 @@ from django.template.backends.base import BaseEngine
 from django.template.backends.utils import csrf_input_lazy
 from django.template.backends.utils import csrf_token_lazy
 from django.template.context import BaseContext
-from django.utils import lru_cache
 from django.utils.encoding import smart_text
 from django.utils.functional import SimpleLazyObject
 from django.utils.functional import cached_property
@@ -109,7 +112,7 @@ class Jinja2(BaseEngine):
     app_dirname = "templates"
 
     @staticmethod
-    @lru_cache.lru_cache()
+    @lru_cache()
     def get_default():
         """
         When only one django-jinja backend is configured, returns it.
