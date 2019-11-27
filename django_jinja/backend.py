@@ -239,7 +239,7 @@ class Jinja2(BaseEngine):
 
     def _initialize_builtins(self, filters=None, tests=None, globals=None, constants=None):
         def insert(data, name, value):
-            if isinstance(value, six.string_types):
+            if isinstance(value, str):
                 data[name] = import_string(value)
             else:
                 data[name] = value
@@ -286,19 +286,16 @@ class Jinja2(BaseEngine):
         except jinja2.TemplateNotFound as exc:
 
             if utils.DJANGO_18:
-                exc = TemplateDoesNotExist(exc.name)
+                new = TemplateDoesNotExist(exc.name)
             else:
-                exc = TemplateDoesNotExist(exc.name, backend=self)
+                new = TemplateDoesNotExist(exc.name, backend=self)
+            
+            raise new from exc
 
-            six.reraise(
-                TemplateDoesNotExist,
-                exc,
-                sys.exc_info()[2],
-            )
         except jinja2.TemplateSyntaxError as exc:
             new = TemplateSyntaxError(exc.args)
             new.template_debug = get_exception_info(exc)
-            six.reraise(TemplateSyntaxError, new, sys.exc_info()[2])
+            raise new from exc
 
 
 @receiver(signals.setting_changed)
