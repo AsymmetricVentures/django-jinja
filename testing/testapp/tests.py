@@ -48,10 +48,6 @@ class RenderTemplatesTests(TestCase):
             ("{{ num|floatformat }}", {'num': 34.23234}, '34.2'),
             ("{{ num|floatformat(3) }}", {'num': 34.23234}, '34.232'),
             ("{{ 'hola'|capfirst }}", {}, "Hola"),
-            ("{{ 'hola mundo'|truncatechars(5) }}", {}, "ho..."),
-            ("{{ 'hola mundo'|truncatechars_html(5) }}", {}, "ho..."),
-            ("{{ 'hola mundo'|truncatewords(1) }}", {}, "hola ..."),
-            ("{{ 'hola mundo'|truncatewords_html(1) }}", {}, "hola ..."),
             ("{{ 'hola mundo'|wordwrap(1) }}", {}, "hola\nmundo"),
             ("{{ 'hola mundo'|title }}", {}, "Hola Mundo"),
             ("{{ 'hola mundo'|slugify }}", {}, "hola-mundo"),
@@ -65,9 +61,25 @@ class RenderTemplatesTests(TestCase):
             ("{{ url('test-1') }}", {}, '/test1/'),
             ("{{ foo }}", {}, "bar"),
         ]
+        
+        # starting with django 2.2, the truncate filters changed slightly to use a single ellipsis
+        if django.VERSION < (2, 2):
+            truncate_data = [
+                ("{{ 'hola mundo'|truncatechars(5) }}", {}, "ho..."),
+                ("{{ 'hola mundo'|truncatechars_html(5) }}", {}, "ho..."),
+                ("{{ 'hola mundo'|truncatewords(1) }}", {}, "hola ..."),
+                ("{{ 'hola mundo'|truncatewords_html(1) }}", {}, "hola ..."),
+            ]
+        else:
+            truncate_data = [
+                ("{{ 'hola mundo'|truncatechars(5) }}", {}, "hola…"),
+                ("{{ 'hola mundo'|truncatechars_html(5) }}", {}, "hola…"),
+                ("{{ 'hola mundo'|truncatewords(1) }}", {}, "hola …"),
+                ("{{ 'hola mundo'|truncatewords_html(1) }}", {}, "hola …"),
+            ]
 
         print()
-        for template_str, kwargs, result in filters_data:
+        for template_str, kwargs, result in (filters_data + truncate_data):
             print("- Testing: ", template_str, "with:", kwargs)
             template = self.env.from_string(template_str)
             _result = template.render(kwargs)
